@@ -7,7 +7,7 @@
 #	-r  rename files  Optional
 #	-x  extension (this can be any extension to match your pictures defaults to jpg) Optional
 #	-i  case insensitive on the extension, incase of a JPG jpg etc. Optional
-#	-p  directory (if -d) and/or file pattern, see strftime for valid pattern, if spaces surround in quotes.  Optional
+#	-p  see strftime - directory (if -d) and/or file pattern, see strftime for valid pattern, if spaces surround in quotes.  Optional
 #
 # If spaces are in the directory, remember to use double quote around the full path IE: "/path/to/photos of me/" and always include ending slash.
 #
@@ -25,7 +25,7 @@ Switch usages:
       -r  rename files  Optional
       -x  extension (this can be any extension to match your pictures defaults to jpg) Optional
       -i  case insensitive on the extension, incase of a JPG jpg etc. Optional
-      -p  directory (if -d) and/or file pattern, see strftime for valid pattern, if spaces surround in quotes.  Optional
+      -p  see strftime - directory (if -d) and/or file pattern, see strftime for valid pattern, if spaces surround in quotes.  Optional
 
 If spaces are in the directory, remember to use double quote around the full path IE: \"/path/to/photos of me/\" and always include ending slash.
 
@@ -129,7 +129,7 @@ for f in `find "$SOURCE_DIR" $CS "*.$EXTENSION" -type f`; do
 	fi
 
 	if $RENAME ; then
-		x=`printf %03d $i`
+		x=`printf %05d $i`
 		f_dest_dir="${f_dest_dir}${f_date}_${x}.$EXTENSION"
 	fi 
 

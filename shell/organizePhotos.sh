@@ -25,7 +25,7 @@ Switch usages:
       -r  rename files  Optional
       -x  extension (this can be any extension to match your pictures defaults to jpg) Optional
       -i  case insensitive on the extension, incase of a JPG jpg etc. Optional
-      -p  directory pattery, see strftime for valid pattern, if spaces surround in quotes.  Optional, but will trigger -d
+      -p  directory (if -d) and/or file pattern, see strftime for valid pattern, if spaces surround in quotes.  Optional
 
 If spaces are in the directory, remember to use double quote around the full path IE: \"/path/to/photos of me/\" and always include ending slash.
 

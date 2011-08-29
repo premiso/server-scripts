@@ -34,7 +34,7 @@ read -p "Press any key to continue with the passenger nginx module install."
 source passenger-install-nginx-module
 
 cd /etc/init.d/
-wget http://pastebin.com/aEVberna -O nginx
+wget http://pastebin.com/raw.php?i=aEVberna -O nginx
 chmod +x nginx
 
 /usr/sbin/update-rc.d -f nginx defaults
@@ -69,7 +69,7 @@ encoding: utf8" >  databse.yml
 echo "production:
    delivery_method: :sendmail" >  email.yml
 
-NGINX_CONF=`exec wget -q -O - http://pastebin.com/tY9Lp4CM`
+NGINX_CONF=`exec wget -q -O - http://pastebin.com/raw.php?i=tY9Lp4CM`
 echo $NGINX_CONF > /opt/nginx/conf/nginx.conf
 
 rake generate_session_store

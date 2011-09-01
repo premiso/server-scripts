@@ -1,10 +1,10 @@
 #!/bin/bash
 #
-# Usage   addsite.sh <domain>
+# Usage   addSite-nginx.sh <domain>
 
 DOMAIN=$1
-WEB_PATH="/var/www/$DOMAIN/htdocs"
-LOG_PATH="/var/www/$DOMAIN/logs"
+WEB_PATH="/var/www/s/$DOMAIN/htdocs"
+LOG_PATH="/var/www/s/$DOMAIN/logs"
 
 if [[ $1 =~ ^(.*)\..*$ ]]
 then
@@ -30,7 +30,6 @@ chown -R $USER:$USER $WEB_PATH/../
 ###### Create the NGINX default config ######
 echo "server {
         listen 80 default;
-        listen   [::]:80 default ipv6only=off;
 
         server_name $DOMAIN *.$DOMAIN;
 
@@ -44,7 +43,7 @@ echo "server {
         }
 
         location ~ (.*)?.php($|/) {
-                if (!-f $request_filename) {
+                if (!-f \$request_filename) {
                         return 404;
                 }
 
@@ -54,6 +53,25 @@ echo "server {
                 fastcgi_pass 127.0.0.1:9000;
         }
 }" > /etc/nginx/sites-available/$DOMAIN
+
+# Setup the php-fpm config file
+echo "[$USER]
+listen = 127.0.0.1:9000
+listen.owner = $USER
+listen.group = $USER
+listen.mode = 0660
+user = $USER
+group = $USER
+pm = dynamic
+pm.max_children = 10
+pm.start_servers = 2
+pm.min_spare_servers = 2
+pm.max_spare_servers = 10
+pm.max_requests = 0
+request_terminate_timeout = 305
+slowlog = /var/log/apache/fpm-$USER-slow.log
+" >> /etc/php5/fpm/pool.d/$USER.conf
+
 
 #Write the NGINX File
 ln -s /etc/nginx/sites-available/$DOMAIN /etc/nginx/sites-enabled/$DOMAIN

@@ -10,3 +10,5 @@ shell/organizePhotos - this script I took mostly from another user but it is a g
 shell/pasteFile.sh - This script is meant to streamline the post-file.it site's pastebin functinoality for easier use over SSH without have to type in the wget command. May add a bit more functionality later, such as the ability to pipe a command to it and paste that. 
 
 shell/install/redmine-nginx.sh - This script is still under development, use at your own risk. I plan on beefing it up to make it more user friendly and have more options / prompts to setup items.
+
+shell/database/restoreGzippedSql.sh - A script to restore sql backups that are in a gzip format using a naming convention such as   dbname.table-name.sql.gz  I run it with root user, but can also be ran by a user with sufficient access to the database. USE WITH CAUTION!

@@ -32,7 +32,7 @@ useradd -G www-data -g $USER -s /bin/sh -d "$ROOT_PATH" $USER
 chown -R $USER:$USER $ROOT_PATH
 
 ###### Create the NGINX default config ######
-echo "upstream {$USER}fpm {
+echo "upstream ${USER}fpm {
     server unix:$SOCK_PATH/php5-fpm.sock;
     #server 127.0.0.1:9000;
 }
@@ -64,13 +64,13 @@ server {
                 fastcgi_index index.php;
                 fastcgi_split_path_info ^(.+.php)(.*)$;
                 include /etc/nginx/fastcgi_params;
-                fastcgi_pass {$USER}fpm;
+                fastcgi_pass ${USER}fpm;
         }
 }" > /etc/nginx/sites-available/$DOMAIN
 
 # Setup the php-fpm config file
 echo "[$USER]
-listen = $ROOT_PATH
+listen = $SOCK_PATH/php5-fpm.sock
 listen.owner = $USER
 listen.group = $USER
 listen.mode = 0660

@@ -22,11 +22,14 @@ mkdir $LOG_PATH
 mkdir $SOCK_PATH
 mkdir "$ROOT_PATH/tmp"
 
+# Make sure nginx can read the files
+chmod 0755 $WEB_PATH
+
 #Create the user group
 groupadd $USER
 
 #add the user
-useradd -G www-data -g $USER -s /bin/sh -d "$ROOT_PATH" $USER
+useradd -g $USER -s /bin/sh -d "$ROOT_PATH" $USER
 
 #Chown it
 chown -R $USER:$USER $ROOT_PATH

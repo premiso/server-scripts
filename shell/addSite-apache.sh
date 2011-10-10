@@ -26,13 +26,15 @@ groupadd $USER
 useradd -g $USER -s /bin/sh -d "$ROOT_PATH" $USER
 
 # Allow the www-data
-usermod -a -G www-data $USER
-usermod -a -G $USER www-data
+# removed for security reasons
+#usermod -a -G www-data $USER
+#usermod -a -G $USER www-data
 
+# @todo, need to test this with the permissions stuff
 #Chown it
 chown -R $USER:$USER $ROOT_PATH
-chown -R www-data:www-data $ROOT_PATH/cgi-bin
-chown -R www-data:www-data $ROOT_PATH/.socks
+#chown -R www-data:www-data $ROOT_PATH/cgi-bin
+#chown -R www-data:www-data $ROOT_PATH/.socks
 
 ###### Create the APACHE default config ######
 echo "<VirtualHost *:80>

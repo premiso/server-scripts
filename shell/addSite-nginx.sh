@@ -10,10 +10,10 @@ LOG_PATH="$ROOT_PATH/logs"
 
 if [[ $1 =~ ^(.*)\..*$ ]]
 then
-        USER=${BASH_REMATCH[1]}
+		USER=${BASH_REMATCH[1]}
 else
-        echo "Invalid domain $1 passed in."
-        exit 1;
+		echo "Invalid domain $1 passed in."
+		exit 1;
 fi
 
 # First make the paths
@@ -29,46 +29,54 @@ chmod 0755 $WEB_PATH
 groupadd $USER
 
 #add the user
-useradd -g $USER -s /bin/sh -d "$ROOT_PATH" $USER
+useradd -g $USER -s /bin/bash -d "$ROOT_PATH" $USER
+
+echo '\nEnter the users new shell password'
+
+passwd $USER 
 
 #Chown it
 chown -R $USER:$USER $ROOT_PATH
 
+# @todo change the main nginx.conf file
+
 ###### Create the NGINX default config ######
 echo "upstream ${USER}fpm {
-    server unix:$SOCK_PATH/php5-fpm.sock;
-    #server 127.0.0.1:9000;
+	server unix:$SOCK_PATH/php5-fpm.sock;
 }
 
 server {
-        listen 80 default;
+		listen 80 default;
 
-        server_name $DOMAIN *.$DOMAIN;
+		server_name $DOMAIN *.$DOMAIN;
 
-        access_log  $LOG_PATH/$DOMAIN.access.log;
-        error_log $LOG_PATH/$DOMAIN.error.log;
+		access_log  $LOG_PATH/$DOMAIN.access.log;
+		error_log $LOG_PATH/$DOMAIN.error.log;
 
-        root $WEB_PATH;
+		root $WEB_PATH;
 
-	location = /favicon.ico {
-        	log_not_found off;
-        	access_log off;
-   	 }
+		location = /favicon.ico {
+			log_not_found off;
+			access_log off;
+		}
 
-        location / {
-                index  index.html index.htm index.php;
-        }
+		location / {
+			index index.php;
+			if (!-e \$request_filename) {
+				rewrite ^(.*)$  /index.php last;
+			}
+		}
 
-        location ~ (.*)?.php($|/) {
-                if (!-f \$request_filename) {
-                        return 404;
-                }
+		location ~ (.*)?.php($|/) {
+				if (!-f \$request_filename) {
+						return 404;
+				}
 
-                fastcgi_index index.php;
-                fastcgi_split_path_info ^(.+.php)(.*)$;
-                include /etc/nginx/fastcgi_params;
-                fastcgi_pass ${USER}fpm;
-        }
+				fastcgi_index index.php;
+				fastcgi_split_path_info ^(.+.php)(.*)$;
+				include /etc/nginx/fastcgi_params;
+				fastcgi_pass ${USER}fpm;
+		}
 }" > /etc/nginx/sites-available/$DOMAIN
 
 # Setup the php-fpm config file
@@ -81,11 +89,11 @@ user = $USER
 group = $USER
 pm = dynamic
 pm.max_children = 10
-pm.start_servers = 2
+pm.start_servers = 5
 pm.min_spare_servers = 2
-pm.max_spare_servers = 10
-pm.max_requests = 0
-request_terminate_timeout = 305
+pm.max_spare_servers = 5
+pm.max_requests = 800
+request_terminate_timeout = 30s
 slowlog = /var/log/apache/fpm-$USER-slow.log
 
 env[USER] = $USER
@@ -144,6 +152,10 @@ php_admin_value[safe_mode]=0
 php_admin_value[cgi.fix_pathinfo]=1
 " >> /etc/php5/fpm/pool.d/$USER.conf
 
+if [ -f "/etc/php5/fpm/pool.d/www.conf" ]
+then
+	rm /etc/php5/fpm/pool.d/www.conf
+fi
 
 #Write the NGINX File
 ln -s /etc/nginx/sites-available/$DOMAIN /etc/nginx/sites-enabled/$DOMAIN

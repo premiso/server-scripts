@@ -1,6 +1,6 @@
 #!/bin/bash
 # Domain (without the www.)
-# Usage   newDomain.sh <domain>
+# Usage   addSite-nginx.sh <domain>
 
 DOMAIN=$1
 ROOT_PATH="/var/www/s/$DOMAIN"

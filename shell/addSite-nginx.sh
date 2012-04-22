@@ -46,37 +46,64 @@ echo "upstream ${USER}fpm {
 }
 
 server {
-		listen 80 default;
+    listen 80 default;
 
-		server_name $DOMAIN *.$DOMAIN;
+    server_name $DOMAIN *.$DOMAIN;
+    
+    # Rewrite all www. to non www. for SEO purposes
+    if (\$host ~* www\.(.*)) {
+        rewrite ^(.*)$ http://$DOMAIN$1 permanent;
+    }
 
-		access_log  $LOG_PATH/$DOMAIN.access.log;
-		error_log $LOG_PATH/$DOMAIN.error.log;
+    access_log  $LOG_PATH/access.log;
+    error_log $LOG_PATH/error.log;
 
-		root $WEB_PATH;
+    root $WEB_PATH;
+    
+    # Ignore favicon
+    location = /favicon.ico {
+        log_not_found off;
+        access_log off;
+    }
+    
+    # Disable logging for robots.txt
+    location = /robots.txt {
+        allow all;
+        log_not_found off;
+        access_log off;
+    }
 
-		location = /favicon.ico {
-			log_not_found off;
-			access_log off;
-		}
+    # Deny all attempts to access hidden files such as .htaccess, .htpasswd, .DS_Store (Mac).
+    location ~ /\. {
+        deny all;
+        access_log off;
+        log_not_found off;
+    }
 
-		location / {
-			index index.php;
-			if (!-e \$request_filename) {
-				rewrite ^(.*)$  /index.php last;
-			}
-		}
+    # Assets
+    location ~ \.(js|css|png|jpg|gif|swf|ico|pdf|mov|fla|zip|rar)$ {
+        # expires 24h;
+        log_not_found off;
+        try_files \$uri =404;
+    }
 
-		location ~ (.*)?.php($|/) {
-				if (!-f \$request_filename) {
-						return 404;
-				}
+    location / {
+        index index.php;
+        if (!-e \$request_filename) {
+            rewrite ^(.*)$  /index.php last;
+        }
+    }
 
-				fastcgi_index index.php;
-				fastcgi_split_path_info ^(.+.php)(.*)$;
-				include /etc/nginx/fastcgi_params;
-				fastcgi_pass ${USER}fpm;
-		}
+    location ~ (.*)?.php($|/) {
+        if (!-f \$request_filename) {
+            return 404;
+        }
+
+        fastcgi_index index.php;
+        fastcgi_split_path_info ^(.+.php)(.*)$;
+        include /etc/nginx/fastcgi_params;
+        fastcgi_pass ${USER}fpm;
+    }
 }" > /etc/nginx/sites-available/$DOMAIN
 
 # Setup the php-fpm config file

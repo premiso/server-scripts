@@ -37,6 +37,7 @@ passwd $USER
 
 #Chown it
 chown -R $USER:$USER $ROOT_PATH
+chown -R $USER:www-data $SOCK_PATH
 
 # @todo change the main nginx.conf file
 
@@ -46,7 +47,7 @@ echo "upstream ${USER}fpm {
 }
 
 server {
-    listen 80 default;
+    listen 80;
 
     server_name $DOMAIN *.$DOMAIN;
     
@@ -110,10 +111,10 @@ server {
 echo "[$USER]
 listen = $SOCK_PATH/php5-fpm.sock
 listen.owner = $USER
-listen.group = $USER
+listen.group = www-data
 listen.mode = 0660
 user = $USER
-group = $USER
+group = www-data
 pm = dynamic
 pm.max_children = 10
 pm.start_servers = 5

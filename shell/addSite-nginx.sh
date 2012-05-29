@@ -122,7 +122,7 @@ pm.min_spare_servers = 2
 pm.max_spare_servers = 5
 pm.max_requests = 800
 request_terminate_timeout = 30s
-slowlog = /var/log/apache/fpm-$USER-slow.log
+slowlog = /var/log/fpm/fpm-$USER-slow.log
 
 env[USER] = $USER
 env[TMP] = $ROOT_PATH/tmp

@@ -51,9 +51,9 @@ server {
 
     server_name $DOMAIN *.$DOMAIN;
     
-    # Rewrite all www. to non www. for SEO purposes
-    if (\$host ~* www\.(.*)) {
-        rewrite ^(.*)$ http://$DOMAIN\$1 permanent;
+    # Rewrite all www. to non www. for my own reasons
+    if (\$host = 'www.$DOMAIN' ) {
+	rewrite  ^/(.*)$  http://$DOMAIN/\$1  permanent;
     }
 
     access_log  $LOG_PATH/access.log;

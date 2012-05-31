@@ -53,7 +53,7 @@ server {
     
     # Rewrite all www. to non www. for SEO purposes
     if (\$host ~* www\.(.*)) {
-        rewrite ^(.*)$ http://$DOMAIN$1 permanent;
+        rewrite ^(.*)$ http://$DOMAIN\$1 permanent;
     }
 
     access_log  $LOG_PATH/access.log;

@@ -21,6 +21,8 @@ mkdir -p $WEB_PATH
 mkdir $LOG_PATH
 mkdir $SOCK_PATH
 mkdir "$ROOT_PATH/tmp"
+touch $LOG_PATH/access.log
+touch $LOG_PATH/error.log
 
 # Make sure nginx can read the files
 chmod 0755 $WEB_PATH
@@ -37,7 +39,7 @@ passwd $USER
 
 #Chown it
 chown -R $USER:$USER $ROOT_PATH
-chown -R $USER:www-data $SOCK_PATH
+chown -R $USER:www-data $SOCK_PATH $LOG_PATH
 
 # @todo change the main nginx.conf file
 
